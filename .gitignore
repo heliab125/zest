@@ -1,0 +1,36 @@
+DEVELOPMENT_PLAN.md
+build/
+
+# Sparkle private key - NEVER COMMIT
+.sparkle_private_key
+
+# Sparkle tools
+.sparkle/
+
+# Release artifacts
+*.dmg
+*.zip
+appcast.xml
+
+# Xcode
+*.xcuserstate
+*.xcuserdatad
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Build logs
+*.log
+
+# Local development configuration (contains dev-specific overrides)
+Config/Local.xcconfig
+
+plans/
+
+# Local AI agent context (not shared)
+.context/
+.wallpaper-cache/
+
+.DS_Store
