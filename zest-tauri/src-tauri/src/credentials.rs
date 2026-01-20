@@ -83,6 +83,9 @@ pub fn delete_credential(key: &str) -> Result<(), CredentialError> {
 #[cfg(target_os = "windows")]
 fn store_credential_windows(key: &str, value: &str) -> Result<(), CredentialError> {
     use windows_registry::*;
+    use std::os::windows::process::CommandExt;
+    // CREATE_NO_WINDOW flag (0x08000000) prevents cmd window from appearing
+    const CREATE_NO_WINDOW: u32 = 0x08000000;
 
     // For simplicity, we'll store in a protected registry location
     // In production, you might want to use the Windows Credential Manager API directly
@@ -95,6 +98,7 @@ fn store_credential_windows(key: &str, value: &str) -> Result<(), CredentialErro
             "cmdkey /generic:{} /user:zest /pass:{}",
             target_name, value
         )])
+        .creation_flags(CREATE_NO_WINDOW)
         .output();
 
     match result {
@@ -126,10 +130,15 @@ fn get_credential_windows(key: &str) -> Result<String, CredentialError> {
 
 #[cfg(target_os = "windows")]
 fn delete_credential_windows(key: &str) -> Result<(), CredentialError> {
+    use std::os::windows::process::CommandExt;
+    // CREATE_NO_WINDOW flag (0x08000000) prevents cmd window from appearing
+    const CREATE_NO_WINDOW: u32 = 0x08000000;
+
     let target_name = format!("{}:{}", SERVICE_NAME, key);
 
     let result = std::process::Command::new("cmd")
         .args(["/C", &format!("cmdkey /delete:{}", target_name)])
+        .creation_flags(CREATE_NO_WINDOW)
         .output();
 
     match result {

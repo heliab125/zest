@@ -357,9 +357,13 @@ pub fn get_env_command(agent: CLIAgent, port: u16, api_key: Option<&str>) -> Str
 #[cfg(windows)]
 pub fn set_windows_env_var(name: &str, value: &str) -> Result<(), ShellProfileError> {
     use std::process::Command;
+    use std::os::windows::process::CommandExt;
+    // CREATE_NO_WINDOW flag (0x08000000) prevents cmd window from appearing
+    const CREATE_NO_WINDOW: u32 = 0x08000000;
 
     let result = Command::new("setx")
         .args([name, value])
+        .creation_flags(CREATE_NO_WINDOW)
         .output()
         .map_err(|e| ShellProfileError::WriteError(e.to_string()))?;
 
@@ -376,6 +380,9 @@ pub fn set_windows_env_var(name: &str, value: &str) -> Result<(), ShellProfileEr
 #[cfg(windows)]
 pub fn remove_windows_env_var(name: &str) -> Result<(), ShellProfileError> {
     use std::process::Command;
+    use std::os::windows::process::CommandExt;
+    // CREATE_NO_WINDOW flag (0x08000000) prevents cmd window from appearing
+    const CREATE_NO_WINDOW: u32 = 0x08000000;
 
     let result = Command::new("reg")
         .args([
@@ -385,6 +392,7 @@ pub fn remove_windows_env_var(name: &str) -> Result<(), ShellProfileError> {
             name,
             "/f",
         ])
+        .creation_flags(CREATE_NO_WINDOW)
         .output()
         .map_err(|e| ShellProfileError::WriteError(e.to_string()))?;
 

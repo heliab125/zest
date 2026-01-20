@@ -534,9 +534,14 @@ async fn kill_process_on_port(port: u16) {
 
     #[cfg(windows)]
     {
+        use std::os::windows::process::CommandExt;
+        // CREATE_NO_WINDOW flag (0x08000000) prevents cmd/powershell window from appearing
+        const CREATE_NO_WINDOW: u32 = 0x08000000;
+
         // On Windows, use netstat to find PIDs
         let output = Command::new("cmd")
             .args(["/C", &format!("netstat -ano | findstr :{}", port)])
+            .creation_flags(CREATE_NO_WINDOW)
             .output()
             .await;
 
@@ -548,6 +553,7 @@ async fn kill_process_on_port(port: u16) {
                         if let Ok(pid) = pid_str.parse::<u32>() {
                             let _ = Command::new("taskkill")
                                 .args(["/F", "/PID", &pid.to_string()])
+                                .creation_flags(CREATE_NO_WINDOW)
                                 .output()
                                 .await;
                         }
@@ -719,6 +725,10 @@ async fn extract_and_install(data: &[u8], asset_name: &str) -> Result<(), ProxyE
 
         #[cfg(windows)]
         {
+            use std::os::windows::process::CommandExt;
+            // CREATE_NO_WINDOW flag (0x08000000) prevents powershell window from appearing
+            const CREATE_NO_WINDOW: u32 = 0x08000000;
+
             // Use PowerShell to extract on Windows
             let output = Command::new("powershell")
                 .args([
@@ -729,6 +739,7 @@ async fn extract_and_install(data: &[u8], asset_name: &str) -> Result<(), ProxyE
                         temp_dir.display()
                     ),
                 ])
+                .creation_flags(CREATE_NO_WINDOW)
                 .output()
                 .await
                 .map_err(|e| ProxyError::ExtractionFailed(e.to_string()))?;

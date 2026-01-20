@@ -805,9 +805,16 @@ pub fn copy_to_clipboard(text: String) -> Result<(), String> {
     #[cfg(target_os = "windows")]
     {
         use std::process::Command;
+        use std::os::windows::process::CommandExt;
+        // CREATE_NO_WINDOW flag (0x08000000) prevents cmd window from appearing
+        const CREATE_NO_WINDOW: u32 = 0x08000000;
+
         let mut child = Command::new("cmd")
             .args(["/C", "clip"])
             .stdin(std::process::Stdio::piped())
+            .stdout(std::process::Stdio::null())
+            .stderr(std::process::Stdio::null())
+            .creation_flags(CREATE_NO_WINDOW)
             .spawn()
             .map_err(|e| e.to_string())?;
 
@@ -1391,12 +1398,18 @@ pub fn find_agent_binary(binary_names: Vec<String>) -> Option<String> {
 
 /// Try to find binary using 'which' (Unix) or 'where' (Windows)
 fn find_via_which_or_where(name: &str) -> Option<String> {
-    use std::process::Command;
+    use std::process::{Command, Stdio};
 
     #[cfg(unix)]
     {
         // Try /usr/bin/which to avoid PATH issues
-        if let Ok(output) = Command::new("/usr/bin/which").arg(name).output() {
+        if let Ok(output) = Command::new("/usr/bin/which")
+            .arg(name)
+            .stdin(Stdio::null())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::null())
+            .output()
+        {
             if output.status.success() {
                 if let Ok(path) = String::from_utf8(output.stdout) {
                     let path = path.trim();
@@ -1410,7 +1423,18 @@ fn find_via_which_or_where(name: &str) -> Option<String> {
 
     #[cfg(windows)]
     {
-        if let Ok(output) = Command::new("where").arg(name).output() {
+        use std::os::windows::process::CommandExt;
+        // CREATE_NO_WINDOW flag (0x08000000) prevents cmd/powershell window from appearing
+        const CREATE_NO_WINDOW: u32 = 0x08000000;
+
+        if let Ok(output) = Command::new("where")
+            .arg(name)
+            .stdin(Stdio::null())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::null())
+            .creation_flags(CREATE_NO_WINDOW)
+            .output()
+        {
             if output.status.success() {
                 if let Ok(path) = String::from_utf8(output.stdout) {
                     let path = path.lines().next().unwrap_or("").trim();
