@@ -1,6 +1,6 @@
 [package]
 name = "zest"
-version = "1.0.0"
+version = "1.0.1"
 description = "AI Provider Quota Manager"
 authors = ["Zest Team"]
 edition = "2021"
