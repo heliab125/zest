@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  background-color: #0a0a0a;
+  color: #fafafa;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+#root {
+  height: 100vh;
+  display: flex;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3f3f46;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #52525b;
+}
+
+/* Custom button styles */
+.btn-primary {
+  @apply px-4 py-2 bg-accent hover:bg-accent-hover text-white rounded-lg font-medium transition-colors;
+}
+
+.btn-secondary {
+  @apply px-4 py-2 bg-background-tertiary hover:bg-zinc-700 text-foreground rounded-lg font-medium transition-colors;
+}
+
+.btn-danger {
+  @apply px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors;
+}
+
+.btn-success {
+  @apply px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors;
+}
+
+/* Card styles */
+.card {
+  @apply bg-background-secondary border border-zinc-800 rounded-xl p-4;
+}
+
+/* Input styles */
+.input {
+  @apply w-full px-3 py-2 bg-background-tertiary border border-zinc-700 rounded-lg text-foreground placeholder-foreground-muted focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent;
+}
+
+/* Status dot */
+.status-dot {
+  @apply w-2 h-2 rounded-full;
+}
+
+.status-dot-running {
+  @apply bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)];
+}
+
+.status-dot-stopped {
+  @apply bg-zinc-500;
+}
+
+.status-dot-error {
+  @apply bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)];
+}
+
+/* Provider colors - dynamically applied */
+.provider-gemini { --provider-color: #4285F4; }
+.provider-claude { --provider-color: #D97706; }
+.provider-codex { --provider-color: #10A37F; }
+.provider-qwen { --provider-color: #7C3AED; }
+.provider-iflow { --provider-color: #06B6D4; }
+.provider-antigravity { --provider-color: #EC4899; }
+.provider-vertex { --provider-color: #EA4335; }
+.provider-kiro { --provider-color: #9046FF; }
+.provider-copilot { --provider-color: #238636; }
+.provider-cursor { --provider-color: #00D4AA; }
+.provider-trae { --provider-color: #00B4D8; }
+.provider-glm { --provider-color: #3B82F6; }
+.provider-warp { --provider-color: #01E5FF; }
